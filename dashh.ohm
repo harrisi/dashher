@@ -1,0 +1,19 @@
+DashH {
+  Section
+    = (Misc+)? Usage Options Bugs
+
+  Misc
+    = (~Usage any)
+
+  Usage
+    = caseInsensitive<"usage:"> restOfLine
+
+  Options
+    = caseInsensitive<"options:"> (~Bugs any)*
+
+  Bugs
+    = caseInsensitive<"report bugs to:"> any*
+
+  restOfLine
+    = (~"\n" any)*
+}
