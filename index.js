@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const ohm = require('ohm-js')
 const { Command } = require('commander')
 const dashherCommand = new Command()
