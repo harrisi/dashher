@@ -1,17 +1,29 @@
 const ohm = require('ohm-js')
+const { Command } = require('commander')
+const dashherCommand = new Command()
 const { readFileSync } = require('fs')
 const { spawnSync } = require('child_process')
 
-const args = process.argv.slice(1)
-if (args.length !== 2) {
-  console.error(`Usage: ${args[0]} <program>`)
-  return
-}
+let program
+
+dashherCommand
+  .version('0.0.1', '-v, --version')
+  .argument('<program>', 'program to test')
+  .action(p => {
+    program = p
+  })
+  .configureHelp({
+    sortSubcommands: true,
+    sortOptions: true,
+    helpWidth: 80,
+  })
+  .showHelpAfterError('(try with -h or --help)')
+  .showSuggestionAfterError()
+
+dashherCommand.parse(process.argv)
 
 const contents = readFileSync('dashh.ohm', 'utf-8')
 const myGrammar = ohm.grammar(contents)
-
-const program = args[1]
 
 const dashh = spawnSync(program, ['-h'])
 const dashdashhelp = spawnSync(program, ['--help'])
