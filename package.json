@@ -1,14 +1,14 @@
 {
   "name": "dashher",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["-h", "--help", "help output validation"],
+  "author": "Ian Harris <ian@fofgof.xyz>",
   "license": "ISC",
-  "description": "",
+  "description": "Reference implementation for dashh <https://github.com/harrisi/dashh>.",
   "dependencies": {
     "commander": "^8.3.0",
     "ohm-js": "^16.0.0"
