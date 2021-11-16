@@ -9,11 +9,19 @@ const { spawnSync } = require('child_process')
 let program
 
 dashherCommand
-  .version('0.0.1', '-v, --version')
+  .version(require('./package').version, '-v, --version')
+
+dashherCommand
   .argument('<program>', 'program to test')
   .action(p => {
     program = p
   })
+
+dashherCommand
+  .option('--optional-bugs', 'bugs section required', false)
+  .option('-g, --grammar [grammarFile]', 'provide custom grammar file', 'dashh.ohm')
+
+dashherCommand
   .configureHelp({
     sortSubcommands: true,
     sortOptions: true,
@@ -24,12 +32,19 @@ dashherCommand
 
 dashherCommand.parse(process.argv)
 
-const contents = readFileSync('dashh.ohm', 'utf-8')
+const options = dashherCommand.opts()
+
+const contents = readFileSync(options.grammar, 'utf-8')
 const myGrammar = ohm.grammar(contents)
+
+const finalGrammar = ohm.grammar(`
+  DashHFinal <: DashH {
+    Sections = Usage Options Bugs${options.optionalBugs ? '?' : ''}
+  }`, {DashH: myGrammar})
 
 const dashh = spawnSync(program, ['-h'])
 const dashdashhelp = spawnSync(program, ['--help'])
-const matcher = myGrammar.match(dashh.status === 0 ? dashh.stdout : dashdashhelp.stdout)
+const matcher = finalGrammar.match(dashh.status === 0 ? dashh.stdout : dashdashhelp.stdout, 'Sections')
 
 if (matcher.succeeded()) {
   console.log('success!')
