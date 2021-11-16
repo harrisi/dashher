@@ -1,10 +1,4 @@
 DashH {
-  Section
-    = (Misc+)? Usage Options Bugs
-
-  Misc
-    = (~Usage any)
-
   Usage
     = caseInsensitive<"usage:"> restOfLine
 
