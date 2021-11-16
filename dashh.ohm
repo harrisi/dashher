@@ -3,11 +3,18 @@ DashH {
     = caseInsensitive<"usage:"> restOfLine
 
   Options
-    = caseInsensitive<"options:"> (~Bugs any)*
+    = caseInsensitive<"options:"> optionsItem+ (~Bugs any)*
+
+  optionsItem
+    = "-" alnum restOfDescription
+    | "--" alnum+ restOfDescription
 
   Bugs
     = caseInsensitive<"report bugs to:"> any*
 
   restOfLine
     = (~"\n" any)*
+
+  restOfDescription
+    = (~optionsItem any)*
 }
