@@ -6,7 +6,7 @@ const dashherCommand = new Command()
 const { readFileSync } = require('fs')
 const { spawnSync } = require('child_process')
 
-let program
+let program, report = [], options
 
 dashherCommand
   .version(require('./package').version, '-v, --version')
@@ -15,11 +15,14 @@ dashherCommand
   .argument('<program>', 'program to test')
   .action(p => {
     program = p
+    options = dashherCommand.opts()
   })
 
 dashherCommand
+  .option('-e, --equivalent', 'require -h and --help output to be identical', true)
   .option('-g, --grammar [grammarFile]', 'provide custom grammar file', 'dashh.ohm')
-  .option('--optional-bugs', 'bugs section required', false)
+  .option('--optional-bugs', 'bugs section required')
+  .option('-V, --verbose', 'provide verbose output')
 
 dashherCommand
   .configureHelp({
@@ -31,8 +34,6 @@ dashherCommand
   .showSuggestionAfterError()
 
 dashherCommand.parse(process.argv)
-
-const options = dashherCommand.opts()
 
 const contents = readFileSync(options.grammar, 'utf-8')
 const myGrammar = ohm.grammar(contents)
@@ -47,10 +48,31 @@ const finalGrammar = ohm.grammar(`
 
 const dashh = spawnSync(program, ['-h'])
 const dashdashhelp = spawnSync(program, ['--help'])
-const matcher = finalGrammar.match(dashh.status === 0 ? dashh.stdout : dashdashhelp.stdout, 'Sections')
 
-if (matcher.succeeded()) {
-  console.log('success!')
-} else {
-  console.log('err!', matcher.message)
+if (options.equivalent) {
+  let equivalent = Buffer.compare(dashh.stdout, dashdashhelp.stdout) === 0
+  report.push(function() {
+    return ({ equivalent })
+  })
 }
+
+report.push(function() {
+  let matcher = finalGrammar.match(
+    dashh.status === 0 ? dashh.stdout : dashdashhelp.stdout,
+    'Sections')
+  return ({
+    parsed: matcher.succeeded()
+  })
+})
+
+if (options.verbose) {
+  for (let [_, res] of Object.entries(report.map(e => e()))) {
+    console.log(res)
+  }
+}
+
+console.log(
+  report.every(e => Object.values(e())[0])
+  ? 'success!'
+  : 'failure!'
+)
