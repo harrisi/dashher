@@ -39,7 +39,10 @@ const myGrammar = ohm.grammar(contents)
 
 const finalGrammar = ohm.grammar(`
   DashHFinal <: DashH {
-    Sections = Usage Options Bugs${options.optionalBugs ? '?' : ''}
+    Sections =
+      Usage
+      Options
+      Bugs${options.optionalBugs ? '?' : ''}
   }`, {DashH: myGrammar})
 
 const dashh = spawnSync(program, ['-h'])
