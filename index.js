@@ -18,8 +18,8 @@ dashherCommand
   })
 
 dashherCommand
-  .option('--optional-bugs', 'bugs section required', false)
   .option('-g, --grammar [grammarFile]', 'provide custom grammar file', 'dashh.ohm')
+  .option('--optional-bugs', 'bugs section required', false)
 
 dashherCommand
   .configureHelp({
