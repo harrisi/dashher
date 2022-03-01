@@ -11,6 +11,6 @@
   "description": "Reference implementation for dashh <https://github.com/harrisi/dashh>.",
   "dependencies": {
     "commander": "^8.3.0",
-    "ohm-js": "^16.0.0"
+    "ohm-js": "^16.3.1"
   }
 }
